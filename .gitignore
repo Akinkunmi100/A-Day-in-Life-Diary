@@ -1,0 +1,24 @@
+# Temporary files
+~$*
+.tmp/
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Environment
+.env
+
+# Data and Reports (Optional: Keep if user wants full project)
+# If you want to exclude large binaries, uncomment below:
+# *.png
+# *.xlsx
+# *.docx
+
+# Analysis Logs
+*_out.txt
+logs/
