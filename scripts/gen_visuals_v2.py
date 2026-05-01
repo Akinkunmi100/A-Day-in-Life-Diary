@@ -192,7 +192,7 @@ make_journey_map(
     days_label='6 days'
 )
 
-make_wordcloud('Adeola Olowolagba', 'Adeola olowolagba', '6-Day')
+make_wordcloud('Adeola Olowolagba', 'Adeola Olowolagba', '6-Day')
 
 
 # ============================================================
