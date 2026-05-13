@@ -257,22 +257,33 @@ ax.set_facecolor('#0D1B2A')
 x = np.arange(4)
 time_labels = ['Morning\n(Wake-10am)', 'Midday\n(10am-12pm)', 'Afternoon\n(12pm-4pm)', 'Evening\n(4pm-10pm)']
 
+from scipy.interpolate import pchip_interpolate
+
 # Plot individual respondent lines (thin, translucent)
 colors_list = ['#FF6B6B', '#4ECDC4', '#FFD700', '#7B68EE', '#FF8C42',
                '#98D8C8', '#F67280', '#C06C84', '#6C5B7B', '#355C7D', '#F8B500']
 
+x_smooth = np.linspace(x.min(), x.max(), 300)
+
 for idx, (resp, arc) in enumerate(respondent_arcs.items()):
     short_name = resp.split()[0]  # first name only
-    ax.plot(x, arc, '-o', color=colors_list[idx % len(colors_list)],
-            alpha=0.4, linewidth=1.5, markersize=5, label=short_name)
+    y_smooth = pchip_interpolate(x, arc, x_smooth)
+    ax.plot(x_smooth, y_smooth, '-', color=colors_list[idx % len(colors_list)],
+            alpha=0.4, linewidth=1.5, label=short_name)
+    ax.plot(x, arc, 'o', color=colors_list[idx % len(colors_list)],
+            alpha=0.4, markersize=5)
 
 # Calculate and plot aggregate
 all_arcs = np.array(list(respondent_arcs.values()))
 if len(all_arcs) > 0:
     agg = all_arcs.mean(axis=0)
-    ax.plot(x, agg, '-o', color='white', linewidth=4, markersize=12, zorder=10, label='AGGREGATE')
-    ax.fill_between(x, agg, 0, where=[a >= 0 for a in agg], alpha=0.2, color='#4ECDC4', interpolate=True)
-    ax.fill_between(x, agg, 0, where=[a < 0 for a in agg], alpha=0.2, color='#FF6B6B', interpolate=True)
+    y_smooth_agg = pchip_interpolate(x, agg, x_smooth)
+    
+    ax.plot(x_smooth, y_smooth_agg, '-', color='white', linewidth=4, zorder=10, label='AGGREGATE')
+    ax.plot(x, agg, 'o', color='white', markersize=12, zorder=10)
+    
+    ax.fill_between(x_smooth, y_smooth_agg, 0, where=(y_smooth_agg >= 0), alpha=0.2, color='#4ECDC4', interpolate=True)
+    ax.fill_between(x_smooth, y_smooth_agg, 0, where=(y_smooth_agg < 0), alpha=0.2, color='#FF6B6B', interpolate=True)
 
     # Annotate aggregate points
     labels = ['Optimistic\n(Prayer & Hope)', 'Declining\n(Work Stress)', 'Low Point\n(Infrastructure)', 'Recovery\n(Escape & Social)']
